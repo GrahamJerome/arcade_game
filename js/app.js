@@ -19,7 +19,7 @@ class Character {
 
 // Enemies our player must avoid
 class Enemy extends Character {
-    constructor(sprite) { // 'images/enemy-bug.png'
+    constructor(sprite) {
         super(sprite);
     }
 }
@@ -32,6 +32,9 @@ class Player extends Character {
         super(sprite);
     }
 }
+
+const player = new Player('images/char-boy.png');
+const enemy = new Enemy('images/enemy-bug.png');
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
