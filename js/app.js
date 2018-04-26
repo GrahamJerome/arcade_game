@@ -6,8 +6,7 @@ class Character {
     // Update the character's position, required method for game
     // Parameter: dt, a time delta between ticks
     update() {
-        // this.x = this.sprite.w * (this.position.col);
-        // this.y = this.sprite.h * (this.position.row - 0.5); // 0.5 for depth perception
+
     }
 
     // Draw the character on the screen, required method for game
@@ -23,7 +22,7 @@ class Enemy extends Character {
 
         this.x = 0 - this.sprite.w;
         this.y = (Math.floor(Math.random() * (3 - 1 + 1)) + 1 ) * this.sprite.h - (this.sprite.h / 2);
-        this.speed = Math.random() * (5 - 1) + 1;
+        this.speed = Math.random() * (5 - 2) + 2;
     }
 
     update() {
@@ -31,7 +30,7 @@ class Enemy extends Character {
         this.x += this.speed;
 
         if (this.x > 5 * this.sprite.w) {
-            console.log('removing enemy');
+            // console.log('removing enemy');
 
             // remove the object from the array, allows for garbage collection of object
             return allEnemies.splice(allEnemies.indexOf(this), 1);
@@ -44,7 +43,7 @@ class Player extends Character {
         super(img);
 
         // give character starting position, width depth
-        this.setStartPosition();
+        this.setPosition();
     }
 
     update() {
@@ -58,9 +57,17 @@ class Player extends Character {
     }
 
     checkCurrentPosition() {
+        // kick out if game won
+        if (gameWon) { return; }
+
         // check to see if win condition has been method
         if (this.y < 0) {
             this.toggleSprite('images/char-isaac-done.png');
+            this.setPosition(2, 2);
+            document.getElementById('win').style.display = 'block';
+            clearInterval(enemySpawner);
+            setInterval(spawnEnemy, 400);
+            gameWon = true;
         }
 
         // if collided with a bug, reset position
@@ -80,22 +87,25 @@ class Player extends Character {
                     ];
 
                 this.toggleSprite(reactions[imgNum]);
-                this.setStartPosition();
+                this.setPosition();
             }
         });
     }
 
-    setStartPosition(col = 2, row = 5) {
+    setPosition(col = 2, row = 5) {
         this.x = this.sprite.w * col;
         this.y = this.sprite.h * (row - 0.5);
     }
 
     toggleSprite(img) {
         this.sprite.img = img;
-        setTimeout(() => this.sprite.img = 'images/char-isaac.png', 1500);
+        setTimeout(() => this.sprite.img = 'images/char-isaac.png', 2000);
     }
 
     handleInput(key) {
+        // ignore input if game has been won
+        if (gameWon) { return; }
+
         // switch to handle what to do with each key press
         // check for out of bounds
         switch(key) {
@@ -112,15 +122,16 @@ class Player extends Character {
                 if (this.x <= this.sprite.w * 3) { this.x += this.sprite.w; }
                 break;
             default:
-                console.log('invalid key');
+                // console.log('invalid key');
                 break;
         }
     }
 }
 
+let gameWon = false;
+
 // Place the player object in a variable called player
 const player = new Player('images/char-isaac.png');
-
 // Place all enemy objects in an array called allEnemies
 const allEnemies = [];
 
@@ -132,7 +143,7 @@ function spawnEnemy() {
 spawnEnemy();
 
 // set a spawner that can be started and stopped later
-const enemySpawner = setInterval(spawnEnemy, 2000);
+let enemySpawner = setInterval(spawnEnemy, 1200);
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
