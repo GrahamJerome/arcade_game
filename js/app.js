@@ -44,8 +44,7 @@ class Player extends Character {
         super(img);
 
         // give character starting position, width depth
-        this.x = this.sprite.w * 2;
-        this.y = this.sprite.h * 4.5;
+        this.setStartPosition();
     }
 
     update() {
@@ -60,8 +59,8 @@ class Player extends Character {
 
     checkCurrentPosition() {
         // check to see if win condition has been method
-        if (this.y === 0) {
-            console.log('win condition met');
+        if (this.y < 0) {
+            this.toggleSprite('images/char-isaac-done.png');
         }
 
         // if collided with a bug, reset position
@@ -73,9 +72,27 @@ class Player extends Character {
                 && this.y + this.sprite.h > enemy.y
                 ) {
 
-                console.log('collision!');
+                const imgNum = Math.floor(Math.random() * (2 - 0 + 1)) + 0;
+                const reactions = [
+                    'images/char-isaac-no.png',
+                    'images/char-isaac-yell.png',
+                    'images/char-isaac-done.png'
+                    ];
+
+                this.toggleSprite(reactions[imgNum]);
+                this.setStartPosition();
             }
         });
+    }
+
+    setStartPosition(col = 2, row = 5) {
+        this.x = this.sprite.w * col;
+        this.y = this.sprite.h * (row - 0.5);
+    }
+
+    toggleSprite(img) {
+        this.sprite.img = img;
+        setTimeout(() => this.sprite.img = 'images/char-isaac.png', 1500);
     }
 
     handleInput(key) {
@@ -102,20 +119,20 @@ class Player extends Character {
 }
 
 // Place the player object in a variable called player
-const player = new Player('images/char-boy.png');
+const player = new Player('images/char-isaac.png');
 
 // Place all enemy objects in an array called allEnemies
 const allEnemies = [];
 
 function spawnEnemy() {
-    allEnemies.push(new Enemy('images/enemy-bug.png'));
+    allEnemies.push(new Enemy('images/enemy-jack.png'));
 }
 
 // kick it off with one enemy
 spawnEnemy();
 
 // set a spawner that can be started and stopped later
-// const enemySpawner = setInterval(spawnEnemy, 1800);
+const enemySpawner = setInterval(spawnEnemy, 2000);
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
