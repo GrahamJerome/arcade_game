@@ -52,10 +52,6 @@ class Player extends Character {
         this.checkCurrentPosition();
     }
 
-    render() {
-        super.render();
-    }
-
     checkCurrentPosition() {
         // kick out if game won
         if (gameWon) { return; }
